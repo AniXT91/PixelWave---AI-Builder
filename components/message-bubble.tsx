@@ -27,10 +27,10 @@ export function MessageBubble({ message }: MessageBubbleProps) {
         
         <div className={`rounded-2xl px-4 py-3 ${
           isUser 
-            ? 'bg-blue-600 text-white ml-3' 
-            : 'bg-gray-100 text-gray-900 mr-3'
+            ? 'bg-[var(--color-primary)] text-white ml-3' 
+            : 'bg-[var(--color-card)] text-[var(--color-text)] mr-3 border border-[var(--color-border)]'
         }`}>
-          <div className="prose prose-sm max-w-none">
+          <div className="prose prose-sm max-w-none dark:prose-invert">
             {(() => {
               // Extract HTML and CSS code blocks
               const htmlMatch = message.content.match(/```html\n([\s\S]*?)```/)
@@ -38,26 +38,26 @@ export function MessageBubble({ message }: MessageBubbleProps) {
               const beforeHtml = message.content.split('```html')[0].trim()
               return htmlMatch || cssMatch ? (
                 <div>
-                  {beforeHtml && <div className="mb-3">{beforeHtml}</div>}
+                  {beforeHtml && <div className="mb-3 text-[var(--color-text)]">{beforeHtml}</div>}
                   {htmlMatch && (
                     <div className="mb-3">
-                      <div className="font-semibold text-xs text-gray-500 mb-1">HTML</div>
-                      <div className="bg-gray-800 text-green-400 rounded-lg p-3 text-xs font-mono overflow-x-auto">
+                      <div className="font-semibold text-xs text-[var(--color-muted)] mb-1">HTML</div>
+                      <div className="bg-[var(--color-card-dark)] text-green-400 rounded-lg p-3 text-xs font-mono overflow-x-auto">
                         <pre className="whitespace-pre-wrap">{htmlMatch[1]}</pre>
                       </div>
                     </div>
                   )}
                   {cssMatch && (
                     <div>
-                      <div className="font-semibold text-xs text-gray-500 mb-1">CSS</div>
-                      <div className="bg-gray-900 text-blue-300 rounded-lg p-3 text-xs font-mono overflow-x-auto">
+                      <div className="font-semibold text-xs text-[var(--color-muted)] mb-1">CSS</div>
+                      <div className="bg-[var(--color-card-dark)] text-blue-300 rounded-lg p-3 text-xs font-mono overflow-x-auto">
                         <pre className="whitespace-pre-wrap">{cssMatch[1]}</pre>
                       </div>
                     </div>
                   )}
                 </div>
               ) : (
-                <p className="whitespace-pre-wrap">{message.content}</p>
+                <p className="whitespace-pre-wrap text-[var(--color-text)]">{message.content}</p>
               )
             })()}
           </div>

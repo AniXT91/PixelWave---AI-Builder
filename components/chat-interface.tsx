@@ -179,15 +179,15 @@ export function ChatInterface({ chatId, onNewChat }: ChatInterfaceProps) {
   }
 
   return (
-    <div className="flex-1 flex">
+    <div className="flex-1 flex h-screen bg-[var(--color-bg)]">
       {/* Chat Area */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col max-w-4xl mx-auto w-full">
         {/* Header */}
-        <div className="p-4 border-b border-gray-200 bg-white">
+        <div className="p-4 border-b border-[var(--color-border)] bg-[var(--color-card)]">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-xl font-semibold">AI Landing Page Generator</h1>
-              <p className="text-sm text-gray-500">
+              <h1 className="text-xl font-semibold text-[var(--color-text)]">AI Landing Page Generator</h1>
+              <p className="text-sm text-[var(--color-muted)]">
                 Describe your landing page and I'll generate the HTML & CSS
               </p>
             </div>
@@ -226,32 +226,32 @@ export function ChatInterface({ chatId, onNewChat }: ChatInterfaceProps) {
         </div>
 
         {/* Messages */}
-        <ScrollArea className="flex-1 p-4" ref={scrollAreaRef}>
+        <ScrollArea className="flex-1 p-4 bg-[var(--color-bg)]">
           {messages.length === 0 ? (
             <div className="flex items-center justify-center h-full">
               <div className="text-center max-w-md">
                 <div className="h-16 w-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Sparkles className="h-8 w-8 text-white" />
                 </div>
-                <h2 className="text-2xl font-bold mb-2">Ready to build?</h2>
-                <p className="text-gray-600 mb-6">
+                <h2 className="text-2xl font-bold mb-2 text-[var(--color-text)]">Ready to build?</h2>
+                <p className="text-[var(--color-muted)] mb-6">
                   Tell me what kind of landing page you'd like to create. Be specific about:
                 </p>
                 <div className="text-left space-y-2 mb-6">
                   <div className="flex items-center space-x-2">
                     <div className="h-2 w-2 bg-blue-600 rounded-full" />
-                    <span className="text-sm">Purpose (business, portfolio, product launch)</span>
+                    <span className="text-sm text-[var(--color-text)]">Purpose (business, portfolio, product launch)</span>
                   </div>
                   <div className="flex items-center space-x-2">
                     <div className="h-2 w-2 bg-purple-600 rounded-full" />
-                    <span className="text-sm">Style preferences (modern, minimal, bold)</span>
+                    <span className="text-sm text-[var(--color-text)]">Style preferences (modern, minimal, bold)</span>
                   </div>
                   <div className="flex items-center space-x-2">
                     <div className="h-2 w-2 bg-green-600 rounded-full" />
-                    <span className="text-sm">Colors and content themes</span>
+                    <span className="text-sm text-[var(--color-text)]">Colors and content themes</span>
                   </div>
                 </div>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-2 justify-center">
                   {quickPrompts.map((item) => (
                     <Button
                       key={item.label}
@@ -266,12 +266,12 @@ export function ChatInterface({ chatId, onNewChat }: ChatInterfaceProps) {
               </div>
             </div>
           ) : (
-            <div className="space-y-6">
+            <div className="space-y-6 max-w-3xl mx-auto">
               {messages.map((message) => (
                 <MessageBubble key={message.id} message={message} />
               ))}
               {isLoading && (
-                <div className="flex items-center space-x-2 text-gray-500">
+                <div className="flex items-center space-x-2 text-[var(--color-muted)]">
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600" />
                   <span className="text-sm">Generating your landing page...</span>
                 </div>
@@ -281,8 +281,8 @@ export function ChatInterface({ chatId, onNewChat }: ChatInterfaceProps) {
         </ScrollArea>
 
         {/* Input */}
-        <div className="p-4 border-t border-gray-200 bg-white">
-          <form onSubmit={handleFormSubmit} className="flex space-x-2">
+        <div className="p-4 border-t border-[var(--color-border)] bg-[var(--color-card)]">
+          <form onSubmit={handleFormSubmit} className="flex space-x-2 max-w-3xl mx-auto">
             <Input
               value={input}
               onChange={handleInputChange}
@@ -300,7 +300,7 @@ export function ChatInterface({ chatId, onNewChat }: ChatInterfaceProps) {
       {/* Preview Panel */}
       {showPreview && generatedCode && (
         <>
-          <Separator orientation="vertical" />
+          <Separator orientation="vertical" className="bg-[var(--color-border)]" />
           <PreviewPanel htmlCode={generatedCode} />
         </>
       )}

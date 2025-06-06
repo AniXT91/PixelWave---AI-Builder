@@ -7,7 +7,7 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'AI Landing Page Generator',
-  description: 'Generate beautiful HTML & CSS landing pages with AI',
+  description: 'Generate beautiful landing pages with AI',
 }
 
 export default function RootLayout({

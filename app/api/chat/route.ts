@@ -47,24 +47,40 @@ export async function POST(req: Request) {
     const stream = new ReadableStream<Uint8Array>({
       start(controller) {
         (async () => {
-          for await (const chunk of result.stream) {
-            const text = chunk.text()
-            if (text) {
-              const encoded = new TextEncoder().encode(text)
-              controller.enqueue(encoded)
-              fullResponse += text
+          let closed = false
+          try {
+            for await (const chunk of result.stream) {
+              const text = chunk.text()
+              if (text && !closed) {
+                const encoded = new TextEncoder().encode(text)
+                controller.enqueue(encoded)
+                fullResponse += text
+              }
             }
-          }
-          controller.close()
-
-          if (chatId) {
-            await prisma.message.create({
-              data: {
-                content: fullResponse,
-                role: 'assistant',
-                chatId,
-              },
-            })
+          } catch (err) {
+            if (!closed) {
+              controller.error(err)
+              closed = true
+            }
+            console.error('Streaming error:', err)
+          } finally {
+            if (!closed) {
+              controller.close()
+              closed = true
+            }
+            if (chatId && fullResponse) {
+              try {
+                await prisma.message.create({
+                  data: {
+                    content: fullResponse,
+                    role: 'assistant',
+                    chatId,
+                  },
+                })
+              } catch (e) {
+                console.error('Failed to save assistant message:', e)
+              }
+            }
           }
         })()
       },

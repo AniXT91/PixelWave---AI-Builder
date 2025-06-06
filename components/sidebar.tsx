@@ -13,9 +13,12 @@ import {
   LogOut, 
   User,
   Sparkles,
-  Settings
+  Settings,
+  Sun,
+  Moon
 } from 'lucide-react'
 import { toast } from 'sonner'
+import { useTheme } from 'next-themes'
 
 interface Chat {
   id: string
@@ -34,6 +37,7 @@ export function Sidebar({ currentChatId, onChatSelect }: SidebarProps) {
   const router = useRouter()
   const [chats, setChats] = useState<Chat[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const { theme, setTheme } = useTheme()
 
   const fetchChats = useCallback(async () => {
     try {
@@ -131,13 +135,18 @@ export function Sidebar({ currentChatId, onChatSelect }: SidebarProps) {
                   style={{ minHeight: 56 }}
                 >
                   <div className="flex-1 min-w-0">
-                    <p className={`truncate font-semibold text-base ${
-                      currentChatId === chat.id
-                        ? 'text-white drop-shadow'
-                        : 'text-gray-900'
-                    }`}>
-                      {chat.title}
-                    </p>
+                    <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-rounded scrollbar-thumb-blue-200">
+                      <span
+                        className={`inline-block font-semibold text-base whitespace-nowrap pr-2 ${
+                          currentChatId === chat.id
+                            ? 'text-white drop-shadow'
+                            : 'text-gray-900'
+                        }`}
+                        style={{ maxWidth: '180px' }}
+                      >
+                        {chat.title}
+                      </span>
+                    </div>
                     <p className={`text-xs ${
                       currentChatId === chat.id
                         ? 'text-blue-100'
@@ -150,10 +159,8 @@ export function Sidebar({ currentChatId, onChatSelect }: SidebarProps) {
                     size="sm"
                     variant="ghost"
                     onClick={(e) => deleteChat(chat.id, e)}
-                    className={`transition-opacity h-8 w-8 p-0 ${
-                      currentChatId === chat.id
-                        ? 'opacity-80 hover:opacity-100 text-white'
-                        : 'opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-600'
+                    className={`transition-opacity h-8 w-8 p-0 text-gray-400 hover:text-red-600 ${
+                      currentChatId === chat.id ? 'text-white hover:text-red-400' : ''
                     }`}
                     tabIndex={-1}
                     aria-label="Delete chat"
@@ -188,16 +195,27 @@ export function Sidebar({ currentChatId, onChatSelect }: SidebarProps) {
           <Button
             variant="ghost"
             size="sm"
-            className="w-full justify-start"
+            className="w-full justify-start flex items-center transition-colors"
+            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            aria-label="Toggle dark mode"
           >
-            <Settings className="h-4 w-4 mr-2" />
-            Settings
+            {theme === 'dark' ? (
+              <>
+                <Sun className="h-4 w-4 mr-2" />
+                Light Mode
+              </>
+            ) : (
+              <>
+                <Moon className="h-4 w-4 mr-2" />
+                Dark Mode
+              </>
+            )}
           </Button>
           <Button
             variant="ghost"
             size="sm"
             onClick={() => signOut()}
-            className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
+            className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/50 dark:text-red-400 dark:hover:text-red-300"
           >
             <LogOut className="h-4 w-4 mr-2" />
             Sign Out
