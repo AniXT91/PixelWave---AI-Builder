@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
-import { Github, Mail, Sparkles } from 'lucide-react'
+import { Mail } from 'lucide-react'
 import { toast } from 'sonner'
 
 export default function SignUp() {
@@ -72,7 +72,7 @@ export default function SignUp() {
       <Card className="w-full max-w-md bg-[#23263a] border-[#2d3142] shadow-xl">
         <CardHeader className="text-center">
           <div className="mx-auto h-12 w-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center mb-4">
-            <Sparkles className="h-6 w-6 text-white" />
+            <Mail className="h-6 w-6 text-white" />
           </div>
           <CardTitle className="text-2xl font-bold text-white">Create your account</CardTitle>
           <CardDescription className="text-gray-400">
@@ -138,15 +138,7 @@ export default function SignUp() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <Button
-              variant="outline"
-              onClick={() => handleOAuthSignIn('github')}
-              className="border-[#2d3142] text-gray-300 hover:bg-[#1a1b23] hover:text-white"
-            >
-              <Github className="mr-2 h-4 w-4" />
-              GitHub
-            </Button>
+          <div className="flex justify-center">
             <Button
               variant="outline"
               onClick={() => handleOAuthSignIn('google')}

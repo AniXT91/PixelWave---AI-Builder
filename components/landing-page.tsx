@@ -30,14 +30,14 @@ export function LandingPage() {
       </header>
 
       {/* Hero Section */}
-      <main className="container mx-auto px-4 py-20">
-        <div className="text-center max-w-4xl mx-auto">
+      <main className="flex flex-col items-center justify-center py-16 overflow-visible">
+        <div className="text-center max-w-4xl mx-auto w-full px-4">
           <div className="inline-flex items-center px-4 py-2 bg-blue-100 rounded-full text-blue-700 text-sm font-medium mb-8">
             <Sparkles className="h-4 w-4 mr-2" />
             AI-Powered Landing Page Generation
           </div>
           
-          <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 bg-clip-text text-transparent mb-6 leading-tight">
+          <h1 className="text-5xl md:text-6xl p-2 font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 bg-clip-text text-transparent mb-6 leading-tight">
             Create Stunning Landing Pages with AI
           </h1>
           
@@ -51,11 +51,6 @@ export function LandingPage() {
               <Button size="lg" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-3 text-lg">
                 Start Building Now
                 <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-            </Link>
-            <Link href="/auth/signin">
-              <Button size="lg" variant="outline" className="px-8 py-3 text-lg">
-                View Demo
               </Button>
             </Link>
           </div>
