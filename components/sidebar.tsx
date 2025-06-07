@@ -194,9 +194,15 @@ export function Sidebar({ currentChatId, onChatSelect }: SidebarProps) {
   return (
     <>
       {/* Mobile */}
-      <div className="sm:hidden p-2">
-        <Button variant="ghost" size="icon" onClick={() => setSidebarOpen(true)} aria-label="Open sidebar">
-          <Menu className="h-6 w-6 text-orange-700" />
+      <div className="sm:hidden p-2 bg-white dark:bg-[#1a2233]">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => setSidebarOpen(true)}
+          aria-label="Open sidebar"
+          className="bg-white text-gray-900 hover:bg-gray-100 focus:bg-gray-100 focus-visible:bg-gray-100 border border-gray-200 shadow-sm !hover:text-gray-900 !focus:text-gray-900"
+        >
+          <Menu className="h-6 w-6 text-gray-900" />
         </Button>
       </div>
 

@@ -13,10 +13,18 @@ import {
   Copy,
   Sparkles,
   Zap,
+  Menu,
+  MoreHorizontal,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { PreviewPanel } from './preview-panel'
 import { MessageBubble } from './message-bubble'
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from '@/components/ui/dropdown-menu'
 
 interface ChatInterfaceProps {
   chatId: string | null
@@ -35,6 +43,7 @@ export function ChatInterface({ chatId, onNewChat }: ChatInterfaceProps) {
   const previewCache = useRef<{ [id: string]: string }>({})
   // Add a flag to track if we just switched chats
   const justSwitchedChat = useRef(false)
+  const [showMobileMenu, setShowMobileMenu] = useState(false)
 
   // Fetch chat history when chatId changes
   useEffect(() => {
@@ -230,49 +239,89 @@ export function ChatInterface({ chatId, onNewChat }: ChatInterfaceProps) {
   }
 
   return (
-    <div key={chatId ?? 'new'} className="flex-1 flex h-screen bg-[var(--color-bg)]">
-      <div className="flex-1 flex flex-col max-w-4xl mx-auto w-full">
+    <div key={chatId ?? 'new'} className="flex-1 flex h-screen bg-[var(--color-bg)] overflow-x-hidden max-w-full">
+      <div className="flex-1 flex flex-col max-w-4xl mx-auto w-full overflow-x-hidden max-w-full">
         {/* Header */}
-        <div className="p-4 border-b border-[var(--color-border)] bg-[var(--color-card)]">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 md:gap-0 w-full">
-            <div className="flex-1 min-w-0">
-              <h1 className="text-xl md:text-2xl font-semibold text-[var(--color-text)] truncate">AI Generator</h1>
-              <p className="text-sm md:text-base text-[var(--color-muted)] truncate">
-                Describe your landing page and I'll generate the HTML & CSS
-              </p>
-            </div>
-            {/* Preview options always visible if code exists */}
-            {showPreviewOptions && (
-              <div className="flex flex-row items-center gap-2 w-full md:w-auto">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleCopyCode}
-                  className="w-full xs:w-auto border-[#5D2DE6] hover:border-[#5CD4D4] focus:border-[#5CD4D4] dark:border-[#5D2DE6] dark:hover:border-[#5CD4D4] dark:focus:border-[#5CD4D4] text-black dark:text-white hover:bg-transparent dark:hover:bg-transparent"
-                >
-                  <Copy className="h-4 w-4 mr-2" />
-                  Copy Code
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleDownloadCode}
-                  className="w-full xs:w-auto border-[#5D2DE6] hover:border-[#5CD4D4] focus:border-[#5CD4D4] dark:border-[#5D2DE6] dark:hover:border-[#5CD4D4] dark:focus:border-[#5CD4D4] text-black dark:text-white hover:bg-transparent dark:hover:bg-transparent"
-                >
-                  <Download className="h-4 w-4 mr-2" />
-                  Download
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleOpenPreview}
-                  className="w-full xs:w-auto border-[#5D2DE6] hover:border-[#5CD4D4] focus:border-[#5CD4D4] dark:border-[#5D2DE6] dark:hover:border-[#5CD4D4] dark:focus:border-[#5CD4D4] text-black dark:text-white hover:bg-transparent dark:hover:bg-transparent"
-                >
-                  <Eye className="h-4 w-4 mr-2" />
-                  Open Preview
-                </Button>
+        <div className="py-4">
+          <div className="w-4/5 mx-auto bg-[var(--color-card)] border-b border-[var(--color-border)] p-4 rounded-xl gap-4">
+            <div className="flex flex-row items-center justify-center w-full md:w-auto gap-4">
+              <div className="flex flex-col items-center w-full md:w-auto">
+                <h1 className="text-xl md:text-2xl font-semibold text-[var(--color-text)] text-center">AI Generator</h1>
+                <p className="text-sm md:text-base text-[var(--color-muted)] text-center">
+                  Describe your landing page and I'll generate the HTML & CSS
+                </p>
               </div>
-            )}
+              {/* Preview options always visible if code exists */}
+              {showPreviewOptions && (
+                <>
+                  {/* Desktop: show inline */}
+                  <div className="hidden sm:flex flex-row items-center gap-2 w-full md:w-auto">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleCopyCode}
+                      className="border-[#5D2DE6] hover:border-[#5CD4D4] focus:border-[#5CD4D4] dark:border-[#5D2DE6] dark:hover:border-[#5CD4D4] dark:focus:border-[#5CD4D4] text-black dark:text-white hover:bg-transparent dark:hover:bg-transparent"
+                    >
+                      <Copy className="h-4 w-4 mr-2" />
+                      Copy Code
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleDownloadCode}
+                      className="border-[#5D2DE6] hover:border-[#5CD4D4] focus:border-[#5CD4D4] dark:border-[#5D2DE6] dark:hover:border-[#5CD4D4] dark:focus:border-[#5CD4D4] text-black dark:text-white hover:bg-transparent dark:hover:bg-transparent"
+                    >
+                      <Download className="h-4 w-4 mr-2" />
+                      Download
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleOpenPreview}
+                      className="border-[#5D2DE6] hover:border-[#5CD4D4] focus:border-[#5CD4D4] dark:border-[#5D2DE6] dark:hover:border-[#5CD4D4] dark:focus:border-[#5CD4D4] text-black dark:text-white hover:bg-transparent dark:hover:bg-transparent min-w-[90px] px-2"
+                    >
+                      <Eye className="h-4 w-4 mr-2" />
+                      Preview
+                    </Button>
+                  </div>
+                  {/* Mobile: show dropdown menu right-aligned */}
+                  <div className="sm:hidden p-2 flex justify-end">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="border-[#5D2DE6] text-black dark:text-white bg-white dark:bg-[var(--color-card)] hover:bg-gray-100 dark:hover:bg-[#23263a] rounded-md"
+                          aria-label="Show options"
+                        >
+                          <MoreHorizontal className="h-5 w-5" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="min-w-[140px] border-[#5D2DE6] bg-white dark:bg-[var(--color-card)] rounded-md">
+                        <DropdownMenuItem
+                          onClick={handleCopyCode}
+                          className="text-black dark:text-white hover:bg-gray-100 dark:hover:bg-[#23263a] focus:bg-gray-100 dark:focus:bg-[#23263a]"
+                        >
+                          <Copy className="h-4 w-4 mr-2" /> Copy Code
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={handleDownloadCode}
+                          className="text-black dark:text-white hover:bg-gray-100 dark:hover:bg-[#23263a] focus:bg-gray-100 dark:focus:bg-[#23263a]"
+                        >
+                          <Download className="h-4 w-4 mr-2" /> Download
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={handleOpenPreview}
+                          className="text-black dark:text-white hover:bg-gray-100 dark:hover:bg-[#23263a] focus:bg-gray-100 dark:focus:bg-[#23263a]"
+                        >
+                          <Eye className="h-4 w-4 mr-2" /> Preview
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                </>
+              )}
+            </div>
           </div>
         </div>
 
