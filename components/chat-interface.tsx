@@ -340,7 +340,7 @@ export function ChatInterface({ chatId, onNewChat }: ChatInterfaceProps) {
                 <p className="text-[var(--color-muted)] mb-6">
                   Tell me what kind of landing page you'd like to create. Be specific about:
                 </p>
-                <div className="text-left space-y-2 mb-6">
+                <div className="flex flex-col items-center justify-center  space-y-2 mb-6">
                   <div className="flex items-center space-x-2">
                     <div className="h-2 w-2 bg-blue-600 rounded-full" />
                     <span className="text-sm text-[var(--color-text)]">Purpose (business, portfolio, product launch)</span>
