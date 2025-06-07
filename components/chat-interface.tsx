@@ -99,8 +99,23 @@ export function ChatInterface({ chatId, onNewChat }: ChatInterfaceProps) {
     if (historyLoaded) {
       setMessages(initialMessages)
       justSwitchedChat.current = true
+      // Find the latest assistant message with a code block
+      const lastCodeMsg = [...initialMessages].reverse().find(
+        (msg) =>
+          msg.role === 'assistant' &&
+          /```html[\s\S]*?```|```css[\s\S]*?```/i.test(msg.content)
+      )
+      if (lastCodeMsg) {
+        const code = buildPreviewHtmlFromMessage(lastCodeMsg.content)
+        setGeneratedCode(code)
+        setShowPreviewOptions(!!code)
+        if (chatId && code) previewCache.current[chatId] = code
+      } else {
+        setGeneratedCode('')
+        setShowPreviewOptions(false)
+      }
     }
-  }, [historyLoaded, initialMessages, setMessages])
+  }, [historyLoaded, initialMessages, setMessages, chatId])
 
   // Scroll to top when chatId changes (when switching chats)
   useEffect(() => {
@@ -228,16 +243,31 @@ export function ChatInterface({ chatId, onNewChat }: ChatInterfaceProps) {
             </div>
             {/* Preview options always visible if code exists */}
             {showPreviewOptions && (
-              <div className="flex flex-col xs:flex-row items-stretch xs:items-center gap-2 xs:gap-2 md:gap-2 w-full md:w-auto">
-                <Button variant="outline" size="sm" onClick={handleCopyCode} className="w-full xs:w-auto">
+              <div className="flex flex-row items-center gap-2 w-full md:w-auto">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleCopyCode}
+                  className="w-full xs:w-auto border-[#5D2DE6] hover:border-[#5CD4D4] focus:border-[#5CD4D4] dark:border-[#5D2DE6] dark:hover:border-[#5CD4D4] dark:focus:border-[#5CD4D4] text-black dark:text-white hover:bg-transparent dark:hover:bg-transparent"
+                >
                   <Copy className="h-4 w-4 mr-2" />
                   Copy Code
                 </Button>
-                <Button variant="outline" size="sm" onClick={handleDownloadCode} className="w-full xs:w-auto">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleDownloadCode}
+                  className="w-full xs:w-auto border-[#5D2DE6] hover:border-[#5CD4D4] focus:border-[#5CD4D4] dark:border-[#5D2DE6] dark:hover:border-[#5CD4D4] dark:focus:border-[#5CD4D4] text-black dark:text-white hover:bg-transparent dark:hover:bg-transparent"
+                >
                   <Download className="h-4 w-4 mr-2" />
                   Download
                 </Button>
-                <Button variant="outline" size="sm" onClick={handleOpenPreview} className="w-full xs:w-auto">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleOpenPreview}
+                  className="w-full xs:w-auto border-[#5D2DE6] hover:border-[#5CD4D4] focus:border-[#5CD4D4] dark:border-[#5D2DE6] dark:hover:border-[#5CD4D4] dark:focus:border-[#5CD4D4] text-black dark:text-white hover:bg-transparent dark:hover:bg-transparent"
+                >
                   <Eye className="h-4 w-4 mr-2" />
                   Open Preview
                 </Button>

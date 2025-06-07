@@ -104,7 +104,7 @@ export function Sidebar({ currentChatId, onChatSelect }: SidebarProps) {
         <Button
           onClick={handleNewChat}
           variant="outline"
-          className="w-full justify-start"
+          className="w-full justify-start border-[#5D2DE6] hover:border-[#5CD4D4] focus:border-[#5CD4D4] dark:border-[#5D2DE6] dark:hover:border-[#5CD4D4] dark:focus:border-[#5CD4D4] text-black dark:text-white hover:bg-transparent dark:hover:bg-transparent"
         >
           <Plus className="h-4 w-4 mr-2" /> New Chat
         </Button>
@@ -130,8 +130,8 @@ export function Sidebar({ currentChatId, onChatSelect }: SidebarProps) {
                   onClick={() => handleSelect(chat.id)}
                   className={`group flex items-center justify-between p-3 rounded-lg cursor-pointer transition-colors border ${
                     currentChatId === chat.id
-                      ? 'bg-[#CBD5E1] border-[#CBD5E1] shadow-md'
-                      : 'hover:bg-[#E2E8F0] hover:border-[#E2E8F0]'
+                      ? 'bg-[#CBD5E1] border-[#CBD5E1] shadow-md dark:bg-[#314155] dark:border-[#3b4660]'
+                      : 'hover:bg-[#E2E8F0] hover:border-[#E2E8F0] dark:hover:bg-[#3b4660] dark:hover:border-[#3b4660]'
                   }`}
                   style={{ minHeight: 56 }}
                 >

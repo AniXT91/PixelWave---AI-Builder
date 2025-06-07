@@ -6,7 +6,7 @@ import Link from 'next/link'
 
 export function LandingPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#F7FAFC] via-[#25474F] to-[#5D2DE6]">
+    <div className="min-h-screen bg-gradient-to-br from-[#18181b] via-[#23263a] via-60% to-[#5D2DE6]">
       {/* Header */}
       <header className="container mx-auto px-4 py-6">
         <nav className="flex items-center justify-between">
