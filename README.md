@@ -10,7 +10,7 @@ Type a few words, and—like magic—a complete landing page appears. Built with
 - 📥 Optional: Download generated HTML & CSS files 
 - 🔐 Auth with NextAuth.js (Email/Password + Google Login)
 - 📦 Uses PostgreSQL (via Supabase)+ Prisma
-- ⚙️ Powered by any GenAI API(Gemini) via Vercel’s AI SDK
+- ⚙️ Powered by any GenAPI (Gemini) via Vercel’s AI SDK
 
 
 ## 🛠 Tech Stack
@@ -21,7 +21,7 @@ Type a few words, and—like magic—a complete landing page appears. Built with
 - **Auth**: NextAuth.js
 - **Database**: PostgreSQL (via Supabase)
 - **ORM**: Prisma 
-- **AI SDK**: Vercel AI SDK + any Gemini
+- **AI SDK**: Vercel AI SDK + Gemini
 
 
 Installation & Setup
@@ -48,10 +48,12 @@ Create a .env.local file in the root and add the following:
 DATABASE_URL=your_postgresql_url
 NEXTAUTH_SECRET=your_nextauth_secret
 NEXTAUTH_URL=http://localhost:3000
-GENAI_API_KEY=your_ai_api_key
+GOOGLE_API_KEY=your_ai_api_key
+GOOGLE_CLIENT_ID = your_client_id
+GOOGLE_CLIENT_SECRET = your_secret_key
 ```
 
-4. Set up Prisma (or Drizzle)
+4. Set up Prisma 
 
 ```bash
 npx prisma generate
