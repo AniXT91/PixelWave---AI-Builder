@@ -267,9 +267,14 @@ export function ChatInterface({ chatId, onNewChat }: ChatInterfaceProps) {
             </div>
           ) : (
             <div className="space-y-6 max-w-3xl mx-auto">
-              {messages.map((message) => (
+            {messages
+              .filter((m): m is { id: string; role: 'user' | 'assistant'; content: string } =>
+                m.role === 'user' || m.role === 'assistant'
+              )
+              .map((message) => (
                 <MessageBubble key={message.id} message={message} />
               ))}
+
               {isLoading && (
                 <div className="flex items-center space-x-2 text-[var(--color-muted)]">
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600" />
