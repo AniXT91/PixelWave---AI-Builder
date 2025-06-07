@@ -4,7 +4,6 @@ import { useState, useEffect, useRef } from 'react'
 import { useChat } from 'ai/react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
 import {
   Send,
@@ -13,6 +12,7 @@ import {
   Download,
   Copy,
   Sparkles,
+  Zap,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { PreviewPanel } from './preview-panel'
@@ -24,34 +24,38 @@ interface ChatInterfaceProps {
 }
 
 export function ChatInterface({ chatId, onNewChat }: ChatInterfaceProps) {
-  const [showPreview, setShowPreview] = useState(false)
   const [generatedCode, setGeneratedCode] = useState('')
+  const [showPreviewOptions, setShowPreviewOptions] = useState(false)
   const [initialMessages, setInitialMessages] = useState<any[]>([])
   const [historyLoaded, setHistoryLoaded] = useState(false)
   const scrollAreaRef = useRef<HTMLDivElement>(null)
+  const prevChatId = useRef<string | null>(null)
+  const prevMessagesLength = useRef<number>(0)
+  // Store preview code per chatId
+  const previewCache = useRef<{ [id: string]: string }>({})
+  // Add a flag to track if we just switched chats
+  const justSwitchedChat = useRef(false)
 
+  // Fetch chat history when chatId changes
   useEffect(() => {
     async function fetchHistory() {
+      setHistoryLoaded(false)
       if (chatId) {
-        setHistoryLoaded(false)
         const res = await fetch(`/api/chats/${chatId}`)
         if (res.ok) {
           const data = await res.json()
-          if (data?.messages) {
-            setInitialMessages(
-              data.messages.map((msg: any) => ({
-                id: msg.id,
-                role: msg.role,
-                content: msg.content,
-              }))
-            )
-          }
+          setInitialMessages(
+            (data.messages || []).map((msg: any) => ({
+              id: msg.id,
+              role: msg.role,
+              content: msg.content,
+            }))
+          )
         }
-        setHistoryLoaded(true)
       } else {
         setInitialMessages([])
-        setHistoryLoaded(true)
       }
+      setHistoryLoaded(true)
     }
     fetchHistory()
   }, [chatId])
@@ -64,39 +68,78 @@ export function ChatInterface({ chatId, onNewChat }: ChatInterfaceProps) {
     isLoading,
     setInput,
     setMessages,
+    stop, // included but not used manually
   } = useChat({
     api: '/api/chat',
     body: { chatId },
     streamProtocol: 'text',
     initialMessages: historyLoaded ? initialMessages : [],
     onFinish: (message) => {
-      setGeneratedCode(buildPreviewHtmlFromMessage(message.content))
-      setShowPreview(true)
-      if (typeof window !== 'undefined' && window.dispatchEvent) {
-        window.dispatchEvent(new Event('refresh-chats'))
-      }
+      const code = buildPreviewHtmlFromMessage(message.content)
+      setGeneratedCode(code)
+      setShowPreviewOptions(!!code)
+      if (chatId && code) previewCache.current[chatId] = code
+      window.dispatchEvent(new Event('refresh-chats'))
     },
   })
 
+  // On chatId change, restore preview if available
   useEffect(() => {
-    if (historyLoaded && initialMessages.length > 0) {
-      setMessages(initialMessages)
+    if (chatId && previewCache.current[chatId]) {
+      setGeneratedCode(previewCache.current[chatId])
+      setShowPreviewOptions(!!previewCache.current[chatId])
+    } else {
+      setGeneratedCode('')
+      setShowPreviewOptions(false)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [historyLoaded])
+  }, [chatId])
 
+  // Restore history after load
+  useEffect(() => {
+    if (historyLoaded) {
+      setMessages(initialMessages)
+      justSwitchedChat.current = true
+    }
+  }, [historyLoaded, initialMessages, setMessages])
+
+  // Scroll to top when chatId changes (when switching chats)
   useEffect(() => {
     if (scrollAreaRef.current) {
-      scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight
+      scrollAreaRef.current.scrollTop = 0
     }
-  }, [messages])
-
-  useEffect(() => {
-    // Reset UI when chatId changes (new chat or switching chat)
-    setGeneratedCode('')
-    setShowPreview(false)
-    setInput('')
+    // Reset prevMessagesLength so the next message triggers scroll to bottom
+    prevMessagesLength.current = messages.length
+    prevChatId.current = chatId
+    justSwitchedChat.current = true
   }, [chatId])
+
+  // Scroll to bottom only when a new message is added to the current chat
+  useEffect(() => {
+    // Prevent scroll to bottom on first render after switching chats
+    if (justSwitchedChat.current) {
+      justSwitchedChat.current = false
+      prevMessagesLength.current = messages.length
+      return
+    }
+    // Only scroll to bottom if chatId hasn't changed and a new message is added
+    if (prevChatId.current === chatId && messages.length > prevMessagesLength.current) {
+      if (scrollAreaRef.current) {
+        scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight
+      }
+    }
+    prevMessagesLength.current = messages.length
+  }, [messages, chatId])
+
+  function buildPreviewHtmlFromMessage(messageContent: string) {
+    const htmlMatch = messageContent.match(/```html\n([\s\S]*?)```/)
+    const cssMatch = messageContent.match(/```css\n([\s\S]*?)```/)
+    const html = htmlMatch?.[1] ?? ''
+    const css = cssMatch?.[1] ?? ''
+    if (!html && !css) return ''
+    return `<!DOCTYPE html><html><head><meta charset='utf-8'><title>Preview</title>${
+      css ? `<style>${css}</style>` : ''
+    }</head><body>${html}</body></html>`
+  }
 
   const handleCopyCode = () => {
     if (generatedCode) {
@@ -120,6 +163,16 @@ export function ChatInterface({ chatId, onNewChat }: ChatInterfaceProps) {
     }
   }
 
+  const handleOpenPreview = () => {
+    if (generatedCode) {
+      const blob = new Blob([generatedCode], { type: 'text/html' })
+      const url = URL.createObjectURL(blob)
+      window.open(url, '_blank', 'noopener,noreferrer')
+      // Optionally revoke after some time
+      setTimeout(() => URL.revokeObjectURL(url), 10000)
+    }
+  }
+
   const quickPrompts = [
     {
       label: 'SaaS Landing Page',
@@ -135,103 +188,74 @@ export function ChatInterface({ chatId, onNewChat }: ChatInterfaceProps) {
     },
   ]
 
-  // Helper to extract HTML and CSS code blocks and build a full HTML document
-  function buildPreviewHtmlFromMessage(messageContent: string) {
-    const htmlMatch = messageContent.match(/```html\n([\s\S]*?)```/)
-    const cssMatch = messageContent.match(/```css\n([\s\S]*?)```/)
-    let html = htmlMatch ? htmlMatch[1] : ''
-    let css = cssMatch ? cssMatch[1] : ''
-    if (!html && !css) return ''
-    return `<!DOCTYPE html><html><head><meta charset='utf-8'><title>Preview</title>${css ? `<style>${css}</style>` : ''}</head><body>${html}</body></html>`
-  }
-
-  // Intercept form submit to auto-create chat if needed
   async function handleFormSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     if (!input.trim() || isLoading) return
     let newChatId = chatId
+    // Always append the new formatting instruction
+    const formattedPrompt = input.trim() + ' Give a beautiful response format, and do not use ** or similar markdown that looks odd on display.'
     if (!chatId) {
-      // Create chat first, use prompt as title
       const res = await fetch('/api/chats', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title: input.trim() })
+        body: JSON.stringify({ title: formattedPrompt }),
       })
       if (res.ok) {
         const chat = await res.json()
         newChatId = chat.id
         onNewChat(chat.id)
-        // Immediately refresh sidebar so new chat appears
-        if (typeof window !== 'undefined' && window.dispatchEvent) {
-          window.dispatchEvent(new Event('refresh-chats'))
-        }
+        window.dispatchEvent(new Event('refresh-chats'))
       } else {
         toast.error('Failed to create chat')
         return
       }
     }
-    setInput(input)
-    handleSubmit(e, { body: { chatId: newChatId } })
-    // After sending, fetch chats to update sidebar
-    if (typeof window !== 'undefined' && window.dispatchEvent) {
-      window.dispatchEvent(new Event('refresh-chats'))
-    }
+    handleSubmit(e, { body: { chatId: newChatId, prompt: formattedPrompt } })
+    window.dispatchEvent(new Event('refresh-chats'))
   }
 
   return (
-    <div className="flex-1 flex h-screen bg-[var(--color-bg)]">
-      {/* Chat Area */}
+    <div key={chatId ?? 'new'} className="flex-1 flex h-screen bg-[var(--color-bg)]">
       <div className="flex-1 flex flex-col max-w-4xl mx-auto w-full">
         {/* Header */}
         <div className="p-4 border-b border-[var(--color-border)] bg-[var(--color-card)]">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-xl font-semibold text-[var(--color-text)]">AI Landing Page Generator</h1>
-              <p className="text-sm text-[var(--color-muted)]">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 md:gap-0 w-full">
+            <div className="flex-1 min-w-0">
+              <h1 className="text-xl md:text-2xl font-semibold text-[var(--color-text)] truncate">AI Generator</h1>
+              <p className="text-sm md:text-base text-[var(--color-muted)] truncate">
                 Describe your landing page and I'll generate the HTML & CSS
               </p>
             </div>
-            <div className="flex items-center space-x-2">
-              {generatedCode && (
-                <>
-                  <Button variant="outline" size="sm" onClick={handleCopyCode}>
-                    <Copy className="h-4 w-4 mr-2" />
-                    Copy Code
-                  </Button>
-                  <Button variant="outline" size="sm" onClick={handleDownloadCode}>
-                    <Download className="h-4 w-4 mr-2" />
-                    Download
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setShowPreview(!showPreview)}
-                  >
-                    {showPreview ? (
-                      <>
-                        <Code className="h-4 w-4 mr-2" />
-                        Show Chat
-                      </>
-                    ) : (
-                      <>
-                        <Eye className="h-4 w-4 mr-2" />
-                        Show Preview
-                      </>
-                    )}
-                  </Button>
-                </>
-              )}
-            </div>
+            {/* Preview options always visible if code exists */}
+            {showPreviewOptions && (
+              <div className="flex flex-col xs:flex-row items-stretch xs:items-center gap-2 xs:gap-2 md:gap-2 w-full md:w-auto">
+                <Button variant="outline" size="sm" onClick={handleCopyCode} className="w-full xs:w-auto">
+                  <Copy className="h-4 w-4 mr-2" />
+                  Copy Code
+                </Button>
+                <Button variant="outline" size="sm" onClick={handleDownloadCode} className="w-full xs:w-auto">
+                  <Download className="h-4 w-4 mr-2" />
+                  Download
+                </Button>
+                <Button variant="outline" size="sm" onClick={handleOpenPreview} className="w-full xs:w-auto">
+                  <Eye className="h-4 w-4 mr-2" />
+                  Open Preview
+                </Button>
+              </div>
+            )}
           </div>
         </div>
 
         {/* Messages */}
-        <ScrollArea className="flex-1 p-4 bg-[var(--color-bg)]">
+        <div
+          ref={scrollAreaRef}
+          className="flex-1 p-4 bg-[var(--color-bg)] overflow-auto"
+        >
           {messages.length === 0 ? (
-            <div className="flex items-center justify-center h-full">
-              <div className="text-center max-w-md">
-                <div className="h-16 w-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Sparkles className="h-8 w-8 text-white" />
+            <div className="flex flex-col justify-center h-full px-4">
+              <div className="text-center max-w-md mx-auto">
+                <div className="h-14 w-14 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Zap className="h-7 w-7 text-white" />
                 </div>
                 <h2 className="text-2xl font-bold mb-2 text-[var(--color-text)]">Ready to build?</h2>
                 <p className="text-[var(--color-muted)] mb-6">
@@ -266,7 +290,7 @@ export function ChatInterface({ chatId, onNewChat }: ChatInterfaceProps) {
               </div>
             </div>
           ) : (
-            <div className="space-y-6 max-w-3xl mx-auto">
+            <div className="space-y-6 w-full">
             {messages
               .filter((m): m is { id: string; role: 'user' | 'assistant'; content: string } =>
                 m.role === 'user' || m.role === 'assistant'
@@ -283,10 +307,10 @@ export function ChatInterface({ chatId, onNewChat }: ChatInterfaceProps) {
               )}
             </div>
           )}
-        </ScrollArea>
+        </div>
 
         {/* Input */}
-        <div className="p-4 border-t border-[var(--color-border)] bg-[var(--color-card)]">
+        <div className="p-4 border-t border-[var(--color-border)] bg-[var(--color-card)] mt-4">
           <form onSubmit={handleFormSubmit} className="flex space-x-2 max-w-3xl mx-auto">
             <Input
               value={input}
@@ -301,14 +325,6 @@ export function ChatInterface({ chatId, onNewChat }: ChatInterfaceProps) {
           </form>
         </div>
       </div>
-
-      {/* Preview Panel */}
-      {showPreview && generatedCode && (
-        <>
-          <Separator orientation="vertical" className="bg-[var(--color-border)]" />
-          <PreviewPanel htmlCode={generatedCode} />
-        </>
-      )}
     </div>
   )
 }

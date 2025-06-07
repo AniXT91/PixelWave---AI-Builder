@@ -28,7 +28,7 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="h-screen flex bg-gray-50">
+    <div className="h-screen flex flex-col sm:flex-row bg-orange-50">
       <Sidebar 
         currentChatId={currentChatId} 
         onChatSelect={setCurrentChatId}

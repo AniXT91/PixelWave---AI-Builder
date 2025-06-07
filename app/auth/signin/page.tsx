@@ -51,20 +51,20 @@ export default function SignIn() {
   }
 
   return (
-    <Card className="w-full max-w-md bg-[#23263a] border-[#2d3142] shadow-xl">
+    <Card className="w-full max-w-md bg-[#23263a] border-[#314155] shadow-xl">
       <CardHeader className="text-center">
-        <div className="mx-auto h-12 w-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center mb-4">
-          <Sparkles className="h-6 w-6 text-white" />
+        <div className="mx-auto h-12 w-12 bg-gradient-to-r from-[#5CD4D4] to-[#314155] rounded-lg flex items-center justify-center mb-4 shadow-lg">
+          <Sparkles className="h-6 w-6 text-[#1B1D29]" />
         </div>
         <CardTitle className="text-2xl font-bold text-white">Welcome back</CardTitle>
-        <CardDescription className="text-gray-400">
+        <CardDescription className="text-[#AAAAAA]">
           Sign in to your account to continue building amazing landing pages
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <form onSubmit={handleCredentialsSignIn} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="email" className="text-gray-300">Email</Label>
+            <Label htmlFor="email" className="text-[#AAAAAA]">Email</Label>
             <Input
               id="email"
               type="email"
@@ -72,11 +72,11 @@ export default function SignIn() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="bg-[#1a1b23] border-[#2d3142] text-white placeholder:text-gray-500 focus:border-blue-500"
+              className="bg-[#1B1D29] border-[#314155] text-white placeholder:text-[#777E90] focus:border-[#5CD4D4]"
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="password" className="text-gray-300">Password</Label>
+            <Label htmlFor="password" className="text-[#AAAAAA]">Password</Label>
             <Input
               id="password"
               type="password"
@@ -84,12 +84,12 @@ export default function SignIn() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="bg-[#1a1b23] border-[#2d3142] text-white placeholder:text-gray-500 focus:border-blue-500"
+              className="bg-[#1B1D29] border-[#314155] text-white placeholder:text-[#777E90] focus:border-[#5CD4D4]"
             />
           </div>
           <Button
             type="submit"
-            className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+            className="w-full bg-gradient-to-r from-[#5CD4D4] to-[#314155] hover:from-[#377179] hover:to-[#5CD4D4] text-[#1B1D29]"
             disabled={isLoading}
           >
             {isLoading ? 'Signing in...' : 'Sign in'}
@@ -98,10 +98,10 @@ export default function SignIn() {
 
         <div className="relative">
           <div className="absolute inset-0 flex items-center">
-            <Separator className="w-full bg-[#2d3142]" />
+            <Separator className="w-full bg-[#314155]" />
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-[#23263a] px-2 text-gray-400">
+            <span className="bg-[#23263a] px-2 text-[#AAAAAA]">
               Or continue with
             </span>
           </div>
@@ -111,16 +111,16 @@ export default function SignIn() {
           <Button
             variant="outline"
             onClick={() => handleOAuthSignIn('google')}
-            className="w-48 justify-center border-[#2d3142] text-gray-300 hover:bg-[#1a1b23] hover:text-white"
+            className="w-48 justify-center border-[#314155] text-[#AAAAAA] hover:bg-[#1B1D29] hover:text-white"
           >
             <Mail className="mr-2 h-4 w-4" />
             Google
           </Button>
         </div>
 
-        <div className="text-center text-sm text-gray-400">
+        <div className="text-center text-sm text-[#AAAAAA]">
           Don't have an account?{' '}
-          <Link href="/auth/signup" className="text-blue-400 hover:text-blue-300 hover:underline">
+          <Link href="/auth/signup" className="text-[#5CD4D4] hover:text-[#377179] hover:underline">
             Sign up
           </Link>
         </div>

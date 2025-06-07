@@ -7,37 +7,37 @@
 
 :root {
   --font-sans: 'Inter', system-ui, sans-serif;
-  --color-bg: #f7f8fa;
-  --color-bg-dark: #1a1b23;
-  --color-sidebar: #181c2a;
-  --color-sidebar-accent: linear-gradient(90deg, #4f46e5 0%, #9333ea 100%);
-  --color-primary: #6366f1;
-  --color-secondary: #a78bfa;
-  --color-accent: #f472b6;
-  --color-border: #e5e7eb;
-  --color-card: #fff;
-  --color-card-dark: #23263a;
-  --color-text: #18181b;
-  --color-text-light: #fff;
-  --color-muted: #6b7280;
+  --color-bg: #F7F9FB;
+  --color-bg-dark: #FFFFFF;
+  --color-sidebar: #F1F5F9;
+  --color-sidebar-accent: linear-gradient(90deg, #5D2DE6 0%, #5CD4D4 100%);
+  --color-primary: #5D2DE6;
+  --color-secondary: #5CD4D4;
+  --color-accent: #314155;
+  --color-border: #D1D5DB;
+  --color-card: #FFFFFF;
+  --color-card-dark: #F7F9FB;
+  --color-text: #1B1D29;
+  --color-text-light: #5D2DE6;
+  --color-muted: #777E90;
   --radius: 1.1rem;
-  --shadow: 0 4px 32px 0 rgba(80, 63, 205, 0.08);
+  --shadow: 0 4px 32px 0 rgba(93, 45, 230, 0.08);
 }
 
 .dark {
-  --color-bg: #181c2a;
-  --color-sidebar: #23263a;
-  --color-sidebar-accent: linear-gradient(90deg, #6366f1 0%, #a78bfa 100%);
-  --color-primary: #a78bfa;
-  --color-secondary: #6366f1;
-  --color-accent: #f472b6;
-  --color-border: #23263a;
-  --color-card: #23263a;
-  --color-card-dark: #181c2a;
-  --color-text: #f3f4f6;
-  --color-text-light: #fff;
-  --color-muted: #a1a1aa;
-  --shadow: 0 4px 32px 0 rgba(80, 63, 205, 0.18);
+  --color-bg: #23263a;
+  --color-sidebar: #2A2B3A;
+  --color-sidebar-accent: linear-gradient(90deg, #5D2DE6 0%, #5CD4D4 100%);
+  --color-primary: #5CD4D4;
+  --color-secondary: #314155;
+  --color-accent: #777E90;
+  --color-border: #314155;
+  --color-card: #2A2B3A;
+  --color-card-dark: #23263a;
+  --color-text: #FFFFFF;
+  --color-text-light: #5CD4D4;
+  --color-muted: #AAAAAA;
+  --shadow: 0 4px 32px 0 rgba(44, 62, 80, 0.18);
 }
 
 html, body {
@@ -141,3 +141,30 @@ a:hover {
 /* For shadcn compatibility, do not override .btn, .input, etc. */
 
 /* Add more as needed for beautiful base UI */
+
+/* Custom visible scrollbar for horizontal scroll - transparent track */
+.custom-scrollbar::-webkit-scrollbar {
+  height: 3px;
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #475569;
+  border-radius: 8px;
+  height: 3px;
+  min-height: 3px;
+  max-height: 3px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 8px;
+}
+
+/* Force code blocks to wrap lines and prevent horizontal scrolling */
+pre, code, .prose pre, .prose code {
+  white-space: pre-wrap !important;
+  word-break: break-word !important;
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+
