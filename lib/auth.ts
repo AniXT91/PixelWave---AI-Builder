@@ -8,6 +8,7 @@ import { getServerSession } from 'next-auth/next'
 import { headers, cookies } from 'next/headers'
 
 export const authOptions: NextAuthOptions = {
+  debug: true,
   adapter: PrismaAdapter(prisma),
   providers: [
     CredentialsProvider({
@@ -67,7 +68,11 @@ export const authOptions: NextAuthOptions = {
         session.user.id = token.id as string
       }
       return session
-    }
+    },
+    async redirect({ url, baseUrl }) {
+    console.log('🔄 Redirect Callback:', { url, baseUrl })
+    return url.startsWith(baseUrl) ? url : baseUrl
+     }
   },
   pages: {
     signIn: '/auth/signin',
